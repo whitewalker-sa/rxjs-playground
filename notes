@@ -1,0 +1,99 @@
+stream - data can come at various point in time
+       - number of emitted values might be infinite
+
+
+
+3 types of Observable notifications
+        - next
+        - complete
+        - error
+
+hot observables - all the subscriptions share the same source
+cold observables - each subscription values are produced independantly from other subscriptions
+
+
+
+
+CREATION OPERATORS
+        of - creates an observable that emits set of values and then it completes
+           - values provided on the arguments will be emitted by the next notification then end with the complete subscription
+
+        from - creates an observable from other types
+             - accepts an array as an argument instead of passing multiple arguments
+             - can create an observable from promise
+
+        fromEvent - creates an observable from various event sources
+                  - Types of events can be
+                            1. DOM EventTarget
+                            2. Node.js EventEmitter
+                            3. jQuery Events
+
+                  - Observables made with this creation function never completes and we have to unsubscribe from the event.
+
+        timer - emits a value after some time, acts similar to setTimeout
+              - produces a new timer for each subscription
+              - the first next notification is emitted with the value zero
+              - a complete notification is emitted which ends the subscription
+
+        interval - is a cold observable, each new subscription will produce a new code instance
+                 - the observable emits values until we unsubscribe
+
+        forkJoin - Good for handling multiple http calls
+                 - Accepts an array of Observables input
+                 - You can pass an array of Observables into it
+                 - It creates subscriptions to all provided observables input
+                 - It will wait for all the observables to complete and emits a set of latest values from all of them
+
+        combineLatest - Accepts an array of Observables input
+                      - You can pass an array of Observables into it
+                      - emits the latest known values in an array that were emitted by one or more observables source
+
+PIPEABLE OPERATORS
+    - allows us to transform the nofications/data emitted by the source observable
+    - allows us to write complex asynchronous logic with few lines of code
+
+        filter - The operator affects the next notification if it meets the condition
+
+        map - provides a new value based on the value emitted by the source or just a new unrelated value
+
+        tap - works like a spy, used to cause a some side effects without interacting with the notifications
+            - used to observe any notifications at any stage of this pipeline
+            - useful for debugging
+
+        debounceTime - introduces the time dimension
+                     - It is about the bounce of the incoming values
+
+        catchError - used to provide a fallback source observable in case the original source fails
+                   - it is only interested in the error notifications
+
+FLATTENING OPERATORS
+    - The flattening operations do not pass the complete notifications coming from inner subscriptions by design
+    - Takes the source observable and makes a new inner observable subscription
+    - They pass only next and error notifications to the output
+
+
+        concatMap - it waits for the first subscription to finish before executing the next notification
+                  - values are handled one by one in the order they were emitted by the source
+
+        switchMap - cancels the previous subscription if the value comes from the source and creates a new subscription immediately
+                  - returns the latest value emitted by the source
+                  - good for its responsiveness
+                  - order mostly safe
+                  - used for searching the database or reading data
+
+        mergeMap  - allows us to have multiple inner subscriptions going on at the same time
+                  - executes inner subscriptions concurrently
+                  - memory leaks are hard to notice
+                  - no definite order
+
+SUBJECTS
+    - allows us to multicast values to multiple observers
+    - similar to event emitter, where you can add and remove events
+    - uses the rxjs concepts
+    - combination of an observable and an observer 
+    - behaves like a hot observable
+    - connects to the same source of emissions
+
+
+    Multicasting 
+        - 
